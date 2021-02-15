@@ -1,0 +1,98 @@
+\documentclass[12pt,twoside]{report}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{amsmath}
+\usepackage{amsthm,amsfonts,amssymb,amscd,amsxtra}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{biblatex}
+\usepackage{dirtytalk}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\newtheorem{defi}{Defini\c{c}\~{a}o}
+\newtheorem{teo}{Teorema}
+\newtheorem{lema}{Lema}
+\newtheorem{prop}{Proposi\c{c}\~{a}o}
+\newtheorem{exemplo}{Exemplo}
+\newtheorem{corolario}{Corol\'{a}rio}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\x}{\textbf{x}}
+\newcommand{\y}{\textbf{y}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\newcommand{\dom}{\mathrm{dom}}
+\newcommand{\ad}{\mathrm{ad}}
+\newcommand{\gerado}{\mathrm{span}}
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[RO,LE]{Thesis Title}
+\fancyfoot{}
+\fancyfoot[LE,RO]{\thepage}
+\fancyfoot[LO,CE]{Chapter \thechapter}
+\fancyfoot[CO,RE]{Author Name}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\usepackage[style=authoryear,sorting=none]{biblatex}
+\addbibresource{references.bib}
+
+\title{Thesis Title}
+\author{Author Name}
+\date{Day Month Year}
+
+\begin{document}
+
+\input{titlepage}
+
+\input{abstract}
+
+\chapter*{Acknowledgements}
+Thanks to Bruno Jedynak for all the feedback and discussion. 
+
+\tableofcontents
+
+
+\chapter{Introduction}
+\input{chapters/introduction}
+
+\chapter{Reinforcement Learning}
+\input{chapters/reinforcement_learning}
+
+\chapter{Search}
+\input{chapters/search}
+
+\chapter{AlphaZero}
+\input{chapters/AlphaZero}
+
+\chapter{Experiments}
+\input{chapters/experiments}
+
+\chapter{Other Work}
+\input{chapters/other_work}
+
+\chapter{Conclusion}
+\input{chapters/conclusion}
+
+\input{chapters/references}
+
+\appendix
+\chapter{Appendix Title}
+\input{chapters/appendix}
+
+\listoffigures
+
+\end{document}
