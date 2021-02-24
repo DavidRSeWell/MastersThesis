@@ -4,7 +4,7 @@ In this section we will discuss some of the work that has come out since AlphaZe
 
 \subsection{MuZero}
 
-Recall that while training a AlphaGo algorithm you need a model of the environment. In order to perform MCTS you have to have an accurate model of the environment that is capable of giving you the next state given a current state and action. The environment also needs to tell you when the game has ended and what the associated reward is. This is a barrier for being able to apply the concepts learned in ALphaGo to other domains. In 2019 Deepmind released a paper #TODO [Insert citation] that helped to address these issues. The algorithm has many similarities to AlphaZero and so lets look at where it differs. MuZero performs MCTS in a latent space with a learned model. That is as they are performing each step of MCTS in a state space that is not directly representative of an actual state in the environment. Let look at a figure of this to see what I mean. 
+Recall that while training a AlphaGo algorithm you need a model of the environment. In order to perform MCTS you have to have an accurate model of the environment that is capable of giving you the next state given a current state and action. The environment also needs to tell you when the game has ended and what the associated reward is. This is a barrier for being able to apply the concepts learned in ALphaGo to other domains. In 2019 Deepmind released a paper \cite{muzero} that helped to address these issues. The algorithm has many similarities to AlphaZero and so lets look at where it differs. MuZero performs MCTS in a latent space with a learned model. That is as they are performing each step of MCTS in a state space that is not directly representative of an actual state in the environment. Let look at a figure of this to see what I mean. 
 
 \begin{figure}[H]
        \centering
@@ -79,7 +79,7 @@ They performed experiments a number of Atari games and seem to demonstrate quite
 
 \subsection{Other work and applications AlphaZero}
 
-I will just point the reader at a few papers that extend ALphaZero or use it in a novel way. 
+I will just point the reader at a few papers that extend ALphaZero or use it in a novel way. There is many more I am sure at this point as the literature continues to expand at a rapid pace in this area. 
 
 \begin{itemize}
     \item AlphaZero is intended to work in domains in which the action space is discrete. Extending the work to continous actions space would greatly help in being able to use it in "real" world applications such as robotics. 

@@ -1,7 +1,11 @@
-\begin{search_page}
+
     \section{Adversarial Search}
 
 The idea of adversarial search is when you have two or more agents with conflicting goals acting in the same environment. Games provide a nice test-bed for these types of algorithms. The hope is that we can learn concepts that will transfer to more complex environments or at least point us in the right direction. In this paper we will just be interested in discussing two player perfect information zero sum games. The ``zero sum" refers to the fact that any loss or gain of one player will directly come at the gain or loss of the other player. Perfect information refers to the notion that ``each player, when making any decision, is perfectly informed of all the events that have previously occurred, including the initialization event of the game. As in chess the board is observable to both players and so there is no hidden information. This is using the language of game theory. Game theory can approach multi agent environments from a number of angles but the most popular and effective one is to explicitly model the adversarial agents. The other option would be to include the agents as part of the environment and then attempt to model the environment. The first option mentioned works well in the two person zero sum setting and that is the one we will focus on in this paper. 
+
+\section{Self-Play}
+
+Self-play is a concept that has been around in AI for a long time depending on how liberal your willing to be with the term AI. In 1951 Brown came out with a paper describing fictitious play a self-play algorithm In 1959 Checkers was solved using self-play with expert knowledge. There have been many other successes including AlphaZero. Self-play in short is any algorithm for which there are 2 or more players and the agent makes actions for every player. So the agent just plays against itself and improves play based off of what it observes during this self-play. This is easiest to see in zero sum two player games since they are symmetric. In this setting a self-play algorithm will play as both player 1 and player 2.The agent will play against itself switching perspectives between player 1 and player 2. AlphaZero does just this. We do this as humans occasionally when playing a game or perhpas other activities. For instance when thinking about how to develop better chess strategies you might see how well a strategy does by attempting to play against that strategy yourself and observing the outcome. 
 
 \section{MiniMax and Alpha Beta Pruning}
 
@@ -15,19 +19,19 @@ The MiniMax algorithm is the first game tree algorithm that we are going to look
 
 MiniMax Search Example: The example below demonstrates the algorithm with an oversimplified example. Moving left to right sarting with the max player. The leaf node values are already known. 
 
-Step 1: Max player looks for max action over children nodes. 
+\begin{enumerate}
+    \item Max player looks for max action over children nodes.  
+    \item No value exists on the children nodes so MIN player finds the min action of the terminal states. First for the left node. Than the right. 
+    \item MAX can now calculate the max of MIN's nodes. So in this toy example it is concluded that MAX should take the right action. 
+\end{enumerate}
 
-Step2: No value exists on the children nodes so MIN player finds the min action of the terminal states. First for the left node. Than the right. 
+\includegraphics[width=300px,height=100px]{images/minimax_example.png}
 
-Step3: MAX can now calculate the max of MIN's nodes. So in this toy example it is concluded that MAX should take the right action. 
-
-\includegraphics[width=400px,height=200px]{images/minimax_example.png}
-
-\includegraphics[width=400px,height=200px]{images/minimax_algo.png}
+\includegraphics[width=300px,height=200px]{images/minimax_algo.png}
 
 The pseudocode for the algorithm above can be implemented almost completely with three functions and a tree representation of whatever space your interested in. This algorithm is guaranteed to give you the optimal solution but is quite computationally expensive as every node needs to be visited at least once. One way to help reduce the search space is with alpha-beta pruning. The basic Idea of the algorithm is that there are points during the minimax search that searching further down a particular path is unnecessary to reach the optimal minimax decision. 
 
-\includegraphics[width=400px,height=200px]{images/alpha_beta_figure.png}
+\includegraphics[width=300px,height=200px]{images/alpha_beta_figure.png}
 
 The above figure [2] (fig 5.5) gives a nice example of why you dont need to search the entire tree. Let the two unsearched children nodes of node C be x and y respectively. Then the Minimax evaluation of the root node of the tree following the steps we just learning is evaluated like the following 
 
@@ -76,7 +80,7 @@ The goal is to find the path through state space that will yield the highest ret
 
 As stated before these 4 steps would continue for a predefined number of iterations and then the acting step would commence. Remember those for steps were a \say{thinking} phase where from the current state the algorithm is thinking about what to do. Once the thinking phase is over the agent acts by selecting an action based off statistic in the tree. One common one is to select the action with the most visit counts or the action with highest value. 
 
-Monte Carlo tree search is a decision time planning algorithm. A decision time planning algorithm is one in which a full simulation of planning is run on every state to produce each action. This is in contrast to \testit{background planning}. In background planning a policy or value function is gradually learned by simulated experience. The learning might happen at different time intervals. In short the two differences are this, decision time planning uses simulated experience to select an action in the current state whereas background planning uses simulated experience to improve a policy or value function and then uses that improved policy or value function to then select an action. 
+Monte Carlo tree search is a decision time planning algorithm. A decision time planning algorithm is one in which a full simulation of planning is run on every state to produce each action. This is in contrast to \textit{background planning}. In background planning a policy or value function is gradually learned by simulated experience. The learning might happen at different time intervals. In short the two differences are this, decision time planning uses simulated experience to select an action in the current state whereas background planning uses simulated experience to improve a policy or value function and then uses that improved policy or value function to then select an action. 
 
 For me this definition was a bit confusing and I suppose that there is likely some overlap in the two approaches in different algorithms. MCTS is a decision time algorithm because from the current state $S_t$ you might run the above 4 step 1k times or 10k times to accumulate statistics in the tree. Then once those simulations are over you will select an action from $S_t$ using the statistics accumulated in the tree. The mechanism for selection can be different from algorithm to algorithm. You might just select an action by trying to maximize value or you might take into account the number of times an action has been taken from $S_t$ in the past.
 
@@ -98,7 +102,7 @@ Below is a tree representing some game between two players blue and red. The cur
 
 We start in the select phase and the node has three actions (children nodes) to choose from. Using the UCT algorithm given above the algorithm would ascribe the following values to each node. Starting from the left most node and working right. Let $ c = 1 $
 
-\includegraphics[width=300px,height=200px]{images/mcts_selection.png}
+\includegraphics[width=200px,height=200px]{images/mcts_selection.png}
 
 UCT(node1) = $ \frac{2}{5} + c \sqrt{\frac{ln({10})}{2}} = 1.07$
 
@@ -114,17 +118,15 @@ UCT(node5) = $ \frac{1}{1} + c \sqrt{\frac{ln({3})}{1}} = 2.048$
 
 So we select node5 and since node5 is a leaf node we go to our expansion step.
 
-\includegraphics[width=300px,height=200px]{images/mcts_expansion.png}
+\includegraphics[width=200px,height=200px]{images/mcts_expansion.png}
 
 We randomly select one of the two child nodes and assign the new node values of 0 / 0 (value / count). Now to estimate the value of the new node we run a rollout policy. This is usually random and so the agent will select random actions until a terminal node is reached. 
 
-\includegraphics[width=300px,height=200px]{images/mcts_simulation.png}
+\includegraphics[width=200px,height=200px]{images/mcts_simulation.png}
 
 In this example the terminal node was a win for blue and so now we can back up the values of the tree with this new result. Somewhat counter intuitively since blue wins that means we increase the value of all the red nodes along with their count but only increase the count values of all the blue nodes. This is because the red nodes are actions selected by blue and therefore since blue won that child node is more valuable to blue in the future. This is unique to multi player MCTS and you would not have to worry about this in a non-adversarial or cooperative setting. 
 
-\includegraphics[width=300px,height=200px]{images/mcts_backpropagation.png}
+\includegraphics[width=200px,height=200px]{images/mcts_backpropagation.png}
 
 
-
-\end{search_page}
 

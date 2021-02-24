@@ -106,9 +106,10 @@
    
    \textbf{Selection} As with all the versions of MCTS we have looked at so far selections are made by taking actions by taking the max of a value term plus an upper confidence bound term. $\underset{a}{argmax} (Q(s,a) + U(s,a))$ In this case both terms come from the network. $U(s,a) \propto P(s,a) / (1 + N(s,a)) $ where $P(s,a) $ is given by the probability distribution over action $\textbf{p}$ from the network. $Q(s,a) = \frac{1}{N(s,a)}\sum_{s^{'}|s,a \rightarrow s^{'}}V(s^{'})$ So $Q(s,a)$ is just the mean over the value of the next states
    
-   \textbf{Expand and evaluate} Once a leaf node is reached the leaf node is expanded and the leaf node is evaluated by the neural network. $ (P(s_{L}),V(s_{L})) = f_{\theta}(s) $ Then each edge is initialized with the following $\{ N(s,a) = 0,W(s,a) = 0,Q(s,a) = 0,P(s,a) = p_{a} \}$. The value of the leaf node $\textbb{v}$ is backed up. 
+   \textbf{Expand and evaluate} Once a leaf node is reached the leaf node is expanded and the leaf node is evaluated by the neural network. $ (P(s_{L}),V(s_{L})) = f_{\theta}(s) $ Then each edge is initialized with the following $ N(s,a) = 0,W(s,a) = 0,Q(s,a) = 0,P(s,a) = p_{a} $. The value of the leaf node $\textbb{v}$ is backed up. 
    
-   \textbf{Backup} For each step that was visited from step (a,b) the statistics for each of the visited edges are updated. $N(s_{t},a_{t}) += 1$ , $W(s_{t},a_{t}) += \textbb{v} $, and $Q(s_{t},a_{t}) = \frac{(s_{t},a_{t})}{N(s_{t},a_{t})} $
+   \textbf{Backup} For each step that was visited from step (a,b) the statistics for each of the visited edges are
+   updated. $N(s_{t},a_{t}) += 1$ , $W(s_{t},a_{t}) += \textbb{v} $, and $Q(s_{t},a_{t})=\frac{(s_{t},a_{t})}{N(s_{t},a_{t})} $
    
    \textbf{Play} After a given number of iterations from the current node an action is selected and executed against the environment. The policy that is output by MCTS is given by the following formula. $\pi(a|s) = \frac{N(s,a)^{\frac{1}{\tau}}}{\sum_{b}N(s,b)^{\frac{1}{\tau}}}$
        
