@@ -1,59 +1,23 @@
 
-    \section{Adversarial Search}
+\section{Planning}
 
-The idea of adversarial search is when you have two or more agents with conflicting goals acting in the same environment. Games provide a nice test-bed for these types of algorithms. The hope is that we can learn concepts that will transfer to more complex environments or at least point us in the right direction. In this paper we will just be interested in discussing two player perfect information zero sum games. The ``zero sum" refers to the fact that any loss or gain of one player will directly come at the gain or loss of the other player. Perfect information refers to the notion that ``each player, when making any decision, is perfectly informed of all the events that have previously occurred, including the initialization event of the game. As in chess the board is observable to both players and so there is no hidden information. This is using the language of game theory. Game theory can approach multi agent environments from a number of angles but the most popular and effective one is to explicitly model the adversarial agents. The other option would be to include the agents as part of the environment and then attempt to model the environment. The first option mentioned works well in the two person zero sum setting and that is the one we will focus on in this paper. 
+We will now discuss the idea of planning in RL. Planning is fundamental to the AlphaZero algorithm. Planning in the context of RL simply means any way in which an agent can use a model of the environment to improve upon a current policy. Either a global or local policy. We have mentioned models already but just to reiterate that a model is anything by which an agent can make predictions about what the environment will do next based on its own actions / interaction with that environment. This is actually intuitive as it is what a lot of us do well trying to make a decision in various domains. Think about trying to make a decision in your favorite game. You usually think along the lines "If I do this then they will do that and then if they do that I will do this...". You think about possible options and then what those various options could lead to. This usually leads to local improvements in your policy since you are just thinking about the current state and what is the best thing to do from there. There are various ways to do planning in RL but we will focus on what is called decision time planning. Decision time planning is what you do when thinking about making a decision in a game as we just discussed. The other way would be to plan from a more global perspective as we do with dynamic programming. That is before we select an action for any particular state we have done a whole lot of planning to compute a value function across all states. In the decision time planning perspective we are focused on a particular state and once we have decided on what action to take the planning process starts over again on the next state. We will see that this is what monte carlo tree search does and it the decision time planning algorithm used by AlphaZero.
 
-\section{Self-Play}
+Monte Carlo tree search is also a form of what is called a "rollout algorithm". Rollout algorithms are decision-time planning algorithms but they are based on Monte Carlo control which we discussed earlier. They use Monte Carlo control on simulated trajectories. Simulated trajectories are trajectories of state action pairs starting from a given state and go until a terminal state is reached. These state action pairs are sampled according to the current policy. So one simply samples an action from a starting state and then uses a model of the environment to get a next state then from that state the process is repeated until a terminal state is reached. This can be done until you have a number of trajectories sampled from a given state. Then you can simply average the returns for each of the actions from the current state to get an estimate of the state-action value for each one. 
 
-Self-play is a concept that has been around in AI for a long time depending on how liberal your willing to be with the term AI. In 1951 Brown came out with a paper describing fictitious play a self-play algorithm In 1959 Checkers was solved using self-play with expert knowledge. There have been many other successes including AlphaZero. Self-play in short is any algorithm for which there are 2 or more players and the agent makes actions for every player. So the agent just plays against itself and improves play based off of what it observes during this self-play. This is easiest to see in zero sum two player games since they are symmetric. In this setting a self-play algorithm will play as both player 1 and player 2.The agent will play against itself switching perspectives between player 1 and player 2. AlphaZero does just this. We do this as humans occasionally when playing a game or perhpas other activities. For instance when thinking about how to develop better chess strategies you might see how well a strategy does by attempting to play against that strategy yourself and observing the outcome. 
-
-\section{MiniMax and Alpha Beta Pruning}
-
-The MiniMax algorithm is a classic game tree search algorithm. It can be used to arrive at guaranteed optimal solutions in two player zero sum games. 
-
-\includegraphics[width=350px,height=200px]{images/aim_figure_5_1.png}
-
-Looking at figure 5.1 above taken from the classic text ``Artificial intelligence a modern approach" [2] we can view the game tree of a two player game as a game between a player MAX and a player MIN. It is player MAX's turn and he wants to maximize his utility. MIN knows that MAX is a greedy human and will be taking actions to maximize his own reward. What should MIN do? MIN will then take actions that will minimize the utility of MAX. MAX in turn knows about the devious plans of MIN and will take actions in accordance with this knowledge. That is to say that each player will act assuming that the other acts optimally. This setup gives rise to our first game-tree algorithm  
-The optimal strategy of a given game tree can be determined by working out the minimax value of each state in the tree. The minimax value is the utility for the 
-The MiniMax algorithm is the first game tree algorithm that we are going to look at. It is relevant for pedagogical purposes but we will also later use MiniMax as a baseline for comparison vs our more complex agents such as MCTS and AlphaGoZero. 
-
-MiniMax Search Example: The example below demonstrates the algorithm with an oversimplified example. Moving left to right sarting with the max player. The leaf node values are already known. 
-
-\begin{enumerate}
-    \item Max player looks for max action over children nodes.  
-    \item No value exists on the children nodes so MIN player finds the min action of the terminal states. First for the left node. Than the right. 
-    \item MAX can now calculate the max of MIN's nodes. So in this toy example it is concluded that MAX should take the right action. 
-\end{enumerate}
-
-\includegraphics[width=300px,height=100px]{images/minimax_example.png}
-
-\includegraphics[width=300px,height=200px]{images/minimax_algo.png}
-
-The pseudocode for the algorithm above can be implemented almost completely with three functions and a tree representation of whatever space your interested in. This algorithm is guaranteed to give you the optimal solution but is quite computationally expensive as every node needs to be visited at least once. One way to help reduce the search space is with alpha-beta pruning. The basic Idea of the algorithm is that there are points during the minimax search that searching further down a particular path is unnecessary to reach the optimal minimax decision. 
-
-\includegraphics[width=300px,height=200px]{images/alpha_beta_figure.png}
-
-The above figure [2] (fig 5.5) gives a nice example of why you dont need to search the entire tree. Let the two unsearched children nodes of node C be x and y respectively. Then the Minimax evaluation of the root node of the tree following the steps we just learning is evaluated like the following 
-
-$ MINIMAX(s_{0}) = max(min(3,12,8), min(2,x,y), min(14,5,2)) $
-
-$ = max(3,min(2,x,y),2) = 3 $ since $ min(2,x,y)$ will never evaluate to anything larger than 2 and 2 is less than 3 then the max player will never select node C and it is unecessary to know what x and y actually evaluate to. The figure below demonstrates this idea nicely. Consider the node n, if another node at the same level as n say $ m^{'}$ or another node further up the tree $m$ is better than n than we dont need to continue to explore n further. So as soon as we have enough information about $n$ to make this conclusion we can stop and prune whatever is left of $n$. Alpha-beta search as the name implies uses to values to help us know when pruning can take place.
-
-\textbf{Alpha} - The value of the best choice we have found so far at any choice point along the path for MAX. 
-
-\textbf{Beta} - The value of the best choice we have found so far at any choice point along the path for MIN. 
-
-\includegraphics[width=400px,height=200px]{images/AI_figure_5_6.png}
-
-Another nice way to represent this constraint is with the following graphic. Any node we are considering must be able to be between alpha and beta as represented by the number line. $ \alpha \leq N \leq \beta $
-
-\includegraphics[width=400px,height=100px]{images/alpha_beta_number_line.png}
+Thinking back to the policy improvement theorem we know that if we can come up with a policy $\pi^{'}$ that is identical to the current policy except that for some action $q_{\pi}(s,a) \geq v_{\pi}(s)$ then we can say that $\pi^{'}$ is better than $\pi$. The sampled trajectories that we got from our rollout algorithm gives us an estimate of $q_{\pi}(s,a^{'})$ for each action $a^{'} \in \mathbf{A}(s)$. Then if we take the max action here $\underset{a}{max} \: q_{\pi}(s,a^{'})$ is a good estimate for an improved policy $\pi^{'}$. So that is what rollout algorithms give us a way to continuously improve a policy. The rollout policy being used is important here. On the one hand you could to exhaustive search through the state space like DP and then you would get an exact estimate of the state-action values. This would just be the policy iteration algorithm we have previously seen when discussing dynamic programming. That looks at every possible trajectory and is untractable so we need something that samples less trajectories but also does so in an intelligent manner. The better this rollout policy is the more likely you are to give an improvement to the current policy. We will now look at a specific instance of this with Monte Carlo Tree Search that provides a good way of making use of sampled trajectories. 
 
 \section{MCTS}
 
 Here we will describe MCTS in its entirety. It is such an essential part of AlphaZero that it needs to be understood well. We will introduce some new vocabulary in this section as MCTS builds off of previous ideas in RL that are not obvious just from the description of the algorithm. I think it helps to start by seeing the algorithm in its entirety. The algorithm alternates between planning and acting. The planning step consists of a guided search through state space and the acting step consists simply on choosing the best action based on what happened during the planning step. The figure below gives a nice pictorial representation of the four main steps of the planning step. States are represented as white nodes and black circles as possible actions.    
 
-\includegraphics[width=450px,height=300px]{images/mcts}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=450px,height=300px]{images/mcts}
+    \caption{MCTS: Sutton Figure 8.10}
+    \label{fig:my_label}
+\end{figure}
 
 The goal is to find the path through state space that will yield the highest return on average. You start with a game tree that only contains the root node. In the case of Go this would be the node representing the start of the game. You then proceed and repeat the following 4 steps as are represented in figure-1 for some predefined number of iterations. Once you have completed all iteration you will move on to the action phase in which you use the statistics built up in the tree to select an action in the actual environment. Each node in the tree associate with a unique state from the environment has the following statistics. For each possible action from the current state the state action value is represented by $Q(s,a)$. Visit count values for each state and action is represented by $N(s,a)$.
 
@@ -127,6 +91,67 @@ We randomly select one of the two child nodes and assign the new node values of 
 In this example the terminal node was a win for blue and so now we can back up the values of the tree with this new result. Somewhat counter intuitively since blue wins that means we increase the value of all the red nodes along with their count but only increase the count values of all the blue nodes. This is because the red nodes are actions selected by blue and therefore since blue won that child node is more valuable to blue in the future. This is unique to multi player MCTS and you would not have to worry about this in a non-adversarial or cooperative setting. 
 
 \includegraphics[width=200px,height=200px]{images/mcts_backpropagation.png}
+
+\section{Multi Agent RL}
+
+Let us now discuss how our previous discussed concepts in RL can be extended to the multi agent setting. Multi agent means that you have two or more players acting in the same environment with either opposing or aligned goals. We will stick to the zero-sum two player setting. Zero sum here means that the reward of one player comes at the expense of the other player. If one player wins the other must lose. Allowing for draws somewhat violates this if you allow for each player to receive some reward. In tictactoe we generally ascribe a reward of 0 for draws but there can be good reasons for at least giving an agent a small reward. 
+
+Lets think back to the tictactoe example that we used to demonstrate the intractability of policy iteration for dynamic programming \ref{fig:tictactoe-dp}. Here we said that we needed $p(s^{'},r | s , a)$ in order to evaluate the current policy $\pi$. Well this probability in the context of a game like tictactoe is the probability of the other player taking a certain action from the state that you just presented to them. Previously we imagined that the environment just gave us this for free but certainly this is not the case in general. So how do we get the other players policy? There are a couple of possible approaches here. The first would be to try and estimate the other players policy from experience. You could for instance run some sort of rollout algorithm where you sample trajectories and maintain a lookup table of state-action observations for how often an opponent took an action given a state. So if out of 100 times of seeing state $s_{1}$ they take action $a_{1}$ 10 times then you would would describe their policy as $\pi_{p2}(a_{1}|s_{1}) = 0.10$. This approach would require maintaining a lookup table and so you would probably want to apply some function approximation technique to estimate a parameterized function for $\pi_{p2}$. This is a viable approach but it is not what was done in AlphaZero. AlphaZero uses a technique called self-play. 
+
+\section{Self-Play}
+
+Self-play is a concept that has been around in AI for a long time depending on how liberal your willing to be with the term AI. In 1951 Brown came out with a paper describing fictitious play a self-play algorithm In 1959 Checkers was solved using self-play with expert knowledge. There have been many other successes including AlphaZero. Self-play in short is any algorithm for which there are 2 or more players and the agent makes actions for every player. So the agent just plays against itself and improves play based off of what it observes during this self-play. This is easiest to see in zero sum two player games since they are symmetric. In this setting a self-play algorithm will play as both player 1 and player 2.The agent will play against itself switching perspectives between player 1 and player 2. AlphaZero does just this. We do this as humans occasionally when playing a game or perhpas other activities. For instance when thinking about how to develop better chess strategies you might see how well a strategy does by attempting to play against that strategy yourself and observing the outcome. 
+
+This does not actually require learning two separate policies. It does however generally require adjusting how state is represented. We will add an encoding into the states representation to signify whose turn it is. This clearly designates one state from the other. In a game like tictactoe you can always see whos turn it is by simply looking how many pieces are on the board for each player. This is not true of other games like chess and Go however. So our policy will gives us a distribution over actions fro both the below state. The first for player "X" the other for player "O". 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=200px,height=100px]{images/2playerpolicy.png}
+    \caption{two player policy}
+    \label{fig:2p-policy}
+\end{figure}
+
+\section{MiniMax and Alpha Beta Pruning}
+
+The MiniMax algorithm is a classic game tree search algorithm. It can be used to arrive at guaranteed optimal solutions in two player zero sum games. 
+
+\includegraphics[width=350px,height=200px]{images/aim_figure_5_1.png}
+
+Looking at figure 5.1 above taken from the classic text ``Artificial intelligence a modern approach" [2] we can view the game tree of a two player game as a game between a player MAX and a player MIN. It is player MAX's turn and he wants to maximize his utility. MIN knows that MAX is a greedy human and will be taking actions to maximize his own reward. What should MIN do? MIN will then take actions that will minimize the utility of MAX. MAX in turn knows about the devious plans of MIN and will take actions in accordance with this knowledge. That is to say that each player will act assuming that the other acts optimally. This setup gives rise to our first game-tree algorithm  
+The optimal strategy of a given game tree can be determined by working out the minimax value of each state in the tree. The minimax value is the utility for the 
+The MiniMax algorithm is the first game tree algorithm that we are going to look at. It is relevant for pedagogical purposes but we will also later use MiniMax as a baseline for comparison vs our more complex agents such as MCTS and AlphaGoZero. 
+
+MiniMax Search Example: The example below demonstrates the algorithm with an oversimplified example. Moving left to right sarting with the max player. The leaf node values are already known. 
+
+\begin{enumerate}
+    \item Max player looks for max action over children nodes.  
+    \item No value exists on the children nodes so MIN player finds the min action of the terminal states. First for the left node. Than the right. 
+    \item MAX can now calculate the max of MIN's nodes. So in this toy example it is concluded that MAX should take the right action. 
+\end{enumerate}
+
+\includegraphics[width=300px,height=100px]{images/minimax_example.png}
+
+\includegraphics[width=300px,height=200px]{images/minimax_algo.png}
+
+The pseudocode for the algorithm above can be implemented almost completely with three functions and a tree representation of whatever space your interested in. This algorithm is guaranteed to give you the optimal solution but is quite computationally expensive as every node needs to be visited at least once. One way to help reduce the search space is with alpha-beta pruning. The basic Idea of the algorithm is that there are points during the minimax search that searching further down a particular path is unnecessary to reach the optimal minimax decision. 
+
+\includegraphics[width=300px,height=200px]{images/alpha_beta_figure.png}
+
+The above figure [2] (fig 5.5) gives a nice example of why you dont need to search the entire tree. Let the two unsearched children nodes of node C be x and y respectively. Then the Minimax evaluation of the root node of the tree following the steps we just learning is evaluated like the following 
+
+$ MINIMAX(s_{0}) = max(min(3,12,8), min(2,x,y), min(14,5,2)) $
+
+$ = max(3,min(2,x,y),2) = 3 $ since $ min(2,x,y)$ will never evaluate to anything larger than 2 and 2 is less than 3 then the max player will never select node C and it is unecessary to know what x and y actually evaluate to. The figure below demonstrates this idea nicely. Consider the node n, if another node at the same level as n say $ m^{'}$ or another node further up the tree $m$ is better than n than we dont need to continue to explore n further. So as soon as we have enough information about $n$ to make this conclusion we can stop and prune whatever is left of $n$. Alpha-beta search as the name implies uses to values to help us know when pruning can take place.
+
+\textbf{Alpha} - The value of the best choice we have found so far at any choice point along the path for MAX. 
+
+\textbf{Beta} - The value of the best choice we have found so far at any choice point along the path for MIN. 
+
+\includegraphics[width=400px,height=200px]{images/AI_figure_5_6.png}
+
+Another nice way to represent this constraint is with the following graphic. Any node we are considering must be able to be between alpha and beta as represented by the number line. $ \alpha \leq N \leq \beta $
+
+\includegraphics[width=400px,height=100px]{images/alpha_beta_number_line.png}
 
 
 
