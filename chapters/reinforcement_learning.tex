@@ -33,7 +33,7 @@ A full discussion of reinforcement learning is not required to understand AlphaZ
     
     \subsection{Environment}
     
-    Loosely defined as the thing that the agent interacts with. Everything that is exterior to the agent. The environment typically encompasses the system that is trying to be solved. It also provides observations and rewards as the agent takes actions. For example when trying to solve the game of Go the agent (the players) takes actions (moves pieces) and the environment is the board, the pieces, and the mechanism for telling the agent the current reward (win / loss) or other special states that are specific to the game. So it is the game itself plus a few other mechanisms to make the learning process possible. The environment is not synonymous with state as observed by the agent. We will look at that next. 
+    Loosely defined as the thing that the agent interacts with. Everything that is exterior to the agent. The environment typically encompasses the system that is trying to be solved. It also provides observations and rewards as the agent takes actions. For example when trying to solve the game of Go the agent (the players) takes actions (moves pieces) and the environment is the board, the pieces, and the mechanism for telling the agent the current reward (win / loss) or other special states that are specific to the game. So it is the game itself plus a few other mechanisms to make the learning process possible. Occasionally in problems like robotics and similar problems the agents own physical body can be part of the environment. The agent will need to control its own body to achieve a task and so it will usually model its body as part of the environment in this case. The environment is not synonymous with state as observed by the agent. We will look at that next. 
     
     \subsection{State}
     
@@ -68,7 +68,7 @@ The following section draws pretty heavily from Sutton \cite{sutton}. Lets put s
 
 $$ p(s^{'},r | s, a) = Pr\{S_{t + 1} = s^{'}, R_{t + 1} = r | S_{t} = s, A_{t} = a\}$$
 
-So the probability given by $p$ describes the entire environment dynamics. The Markov property as described in Sutton {Introduction to reinforcement learning} "is best viewed as a restriction not on the decision process, but on the state. The state must include information about all aspects of the past agent–environment interaction that make a difference for the future".
+So the probability given by $p$ describes the entire environment dynamics. The Markov property as described in \cite{sutton} "is best viewed as a restriction not on the decision process, but on the state. The state must include information about all aspects of the past agent–environment interaction that make a difference for the future".
 
 How state, action and time is defined is quite flexible in this formation. Time does not have to refer to an actual interval of time but can just be some set of steps that happen one after the other. Actions likewise can really be any decision that we want to learn how to make. 
 
@@ -110,11 +110,11 @@ One central idea in reinforcement learning is the ability to view a value functi
     
 Then we can expand this by thinking about what en expectation means here in terms of our random variable $R_{t + 1}$. In words it is the value of all future rewards we would see by transitioning to new states. We have said previously that the probability of transitioning to a new state $s^{'}$ and receiving reward $r$ from the current state given a certain action is given by the function $p(s^{'},r|,s,a)$ the system dynamics of our MDP. We know the definition of expected value is the sum over possible outcomes of a random weighted by the probability of that outcome happening. So we can write the expected value of $R_{t}$ given a specific state and action. 
 
-$$ \mathbb{E}[R_{t}] = \underset{s^{'},r}{\sum}p(s^{'},r|,s,a)[ r ]$$
+$$ \mathbb{E}[R_{t} | S_{t} = s] = \underset{s^{'},r}{\sum}p(s^{'},r|,s,a)[ r ]$$
 
 We want however to look at the expectation following a specific policy. A policy $\pi(a|s)$ gives us a distribution over possible next actions given the current state. So we can further expand on our previous equation. 
 
-$$ \mathbb{E_{\pi}}[R_{t}] = \underset{a}{\sum}\pi(a|s)\underset{s^{'},r}{\sum}p(s^{'},r|,s,a)[ r ]$$
+$$ \mathbb{E_{\pi}}[R_{t} | S_{t} = s] = \underset{a}{\sum}\pi(a|s)\underset{s^{'},r}{\sum}p(s^{'},r|,s,a)[ r ]$$
 
 We can now go back to our expectation of the cumulative reward. 
 
@@ -207,7 +207,7 @@ I think that the $\mathbf{q_{*}}$ optimal value function can be more intuitive. 
 
 \section{Dynamic Programming}
 
-Dynamic programming (DP) is one of the more foundational topics within machine learning. We will not dwell on this topic too long but there are a few important lessons in which DP can help inform our understanding of RL and AlphaZero. We have just concluded discussing optimal value functions and now we need to find a way to actually compute them. That is where DP comes in. DP is essentially a collection of algorithms used to compute optimal value functions. Recall that (\ref{Bellman State Value Equation}) gave us a way to evaluate the value of state given a certain policy. This equation actually gives us a system of linear equations and can be solved directly if the model of the environment is totally known. We have $|S|$ equations and $|S|$ unknowns. This of course is not computationally very feasible so we need to find a way to compute (\ref{Bellman State Value Equation}) iteratively. We can actually just turn it into an update rule like the following. 
+Dynamic programming (DP) is one of the more foundational topics within reinforcement learning. We will not dwell on this topic too long but there are a few important lessons in which DP can help inform our understanding of RL and AlphaZero. We have just concluded discussing optimal value functions and now we need to find a way to actually compute them. That is where DP comes in. DP is essentially a collection of algorithms used to compute optimal value functions. Recall that (\ref{Bellman State Value Equation}) gave us a way to evaluate the value of state given a certain policy. This equation actually gives us a system of linear equations and can be solved directly if the model of the environment is totally known. We have $|S|$ equations and $|S|$ unknowns. This of course is not computationally very feasible so we need to find a way to compute (\ref{Bellman State Value Equation}) iteratively. We can actually just turn it into an update rule like the following. 
 
 \begin{equation}\label{Bellman State Value Update Equation}
 \mathbf{v_{k + 1}(s)} = \underset{a}{\sum}\pi(a|s)\underset{s^{'},r}{\sum}p(s^{'},r|,s,a)[ r + \gamma \mathbf{v_{k}(s^{'})}]
@@ -285,7 +285,7 @@ Just like we saw with DP we can move from simply evaluating a given policy to ac
 The policy improvement theorem as discussed before applies to $\pi_{k}$ the $kth$ step of the algorithm. This means that if at each iteration of the algorithm we improve our policy by acting greedily than we can assume that the following is true. 
 
 $$
-q_{\pi_{k}}(s,\pi_{k + 1}) \geq \mathbf{v}_{\pi_{k}}(s)
+q_{\pi_{k}}(s,\pi_{k + 1}(s)) \geq \mathbf{v}_{\pi_{k}}(s)
 $$
 
 There are two assumptions here that are necessary for convergence. The first is that sufficient exploration is happening. That is that each state action pair has some non zero probability of occurring. The second is that we need an in order to evaluate a given policy we need an infinite number of episodes. The Monte Carlo Exploring Starts algorithm is an example of one that drops the second requirement but satisfies the first by randomly choosing a state action pair to start at. The value function $Q(S_{t},A_{t})$ is able to converge accumulating and averaging returns for all episodes. Convergence although intuitively seems guaranteed has not so far been proven. The exploring starts assumption can be dropped by doing things like using a $\epsilon$-greedy algorithm that with probability $\epsilon$ takes a random action. This will ensure that all state action pairs are visited in the limit and allows you to start each episode in a more "natural" manner.
@@ -383,7 +383,7 @@ Nevertheless we can start by phrasing our RL problem as a SL problem. First we n
 
 \section{DQN}
 
-We have discussed briefly the idea of applying function approximation to RL. The task is non trivial and we have noted a couple of the dangers involved. I will now use a popular paper to further the discussion of the use of function approximation to enhance the ability of a RL algorithm to better generalize. A nature paper from 2015 entitled "Human-level control through deep reinforcement learning" showed how you could take a "simple" algorithm like Q learning and scale it to be a state of the art. Previous work on applying Neural networks to Q learning showed that this approach was unstable {RL is unstable paper}. The instability comes from several sources. 
+We have discussed briefly the idea of applying function approximation to RL. The task is non trivial and we have noted a couple of the dangers involved. I will now use a popular paper to further the discussion of the use of function approximation to enhance the ability of a RL algorithm to better generalize. A nature paper from 2015 entitled "Human-level control through deep reinforcement learning" \cite{dqn} showed how you could take a "simple" algorithm like Q learning and scale it to be a state of the art. Previous work on applying Neural networks to Q learning showed that this approach was unstable \cite{nfq}. The instability comes from several sources. 
 
 \begin{itemize}
     \item Correlations present in the sequence of observations
@@ -391,7 +391,7 @@ We have discussed briefly the idea of applying function approximation to RL. The
     \item Correlations between action-values (Q) and the target values r + $\gamma Q(s^{'},a^{'})$
 \end{itemize}
 
-We have already mentioned the second issue which refers to the nonstationarity of the data. The other two refer to a common problem that most supervised learning (SL) problems are forced to address. That is correlation among samples. There is a common assumption made in most SL tasks that the observed samples are IID (Independentally and Identically distributed). A lot of care has to be taken to help at least approximate this assumption.  In the case of Q learning the sequences are highly correlated but so are the labels. The DQN paper address these issues in two ways. 
+We have already mentioned the second issue which refers to the nonstationarity of the data. The other two refer to a common problem that most supervised learning (SL) problems are forced to address. That is correlation among samples. There is a common assumption made in most SL tasks that the observed samples are IID (Independentally and Identically distributed). A lot of care has to be taken to help at least approximate this assumption.  In the case of Q learning the sequences are highly correlated but so are the labels. The DQN paper addressed these issues in two ways. 
 
 \begin{itemize}
     \item Using an experience replay buffer that randomizes the data
