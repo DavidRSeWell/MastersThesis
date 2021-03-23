@@ -1,4 +1,4 @@
-\section{Reinforcement learning}
+\section{RL Intro}
 
 This paper will attempt to understand AlphaZero from a Reinforcement Learning (RL) perspective. A bit of background on RL will help clarify some of the commonly used vocabulary we will need to describe AlphaGo. RL is a branch of machine learning in which an agent attempts to maximize reward by taking actions in an environment. In a typical machine learning setting you are usually given a set of data and a set of labels and you want to be able correctly guess the labels from the given data. This is called supervised learning and is the type of machine learning that most people have seen. In RL instead of being given data we typically generate our own data by interacting with an environment. This process I just described is shown in Figure 1. 
 
@@ -16,20 +16,10 @@ A full discussion of reinforcement learning is not required to understand AlphaZ
 
     \begin{figure}[H]
         \centering
-        \includegraphics[width=350px,height=200px]{images/alphazero_concepts.png}
+        \includegraphics[width=350px,height=300px]{images/alpha_hierarchy.png}
         \caption{Concept Hierarchy}
         \label{fig:my_label}
     \end{figure}
-
-    
-    \begin{enumerate}
-        \item Environment
-        \item State
-        \item Policy
-        \item Reward Signal 
-        \item Value
-        \item Model
-    \end{enumerate}
     
     \subsection{Environment}
     
@@ -142,7 +132,7 @@ Lets try and picture what the bellman equation might look like for the game of t
 \begin{figure}[H]
         \centering
         \includegraphics[width=400px,height=300px]{images/PolicyEvaluationExample/intractable_value_function.png}
-        \caption{Tictactoe DP}
+        \caption{Tictactoe Bellman 1}
         \label{fig:tictactoe-dp}
 \end{figure}
 
@@ -151,7 +141,7 @@ In figure 2.5 below we see the same calculation expanded out but for state $s_{1
 \begin{figure}[H]
         \centering
         \includegraphics[width=400px,height=300px]{images/PolicyEvaluationExample/intractable_value_function_2.png}
-        \caption{}
+        \caption{Ticatactoe Bellman 2}
         \label{fig:my_label}
 \end{figure}
 
@@ -162,7 +152,7 @@ Lets look at an example of evaluating this a value function for a specific state
 \begin{figure}[H]
         \centering
         \includegraphics[width=150px,height=150px]{images/PolicyEvaluationExample/pe_example_s0.png}
-        \caption{}
+        \caption{policy eval 1}
         \label{fig:my_label}
 \end{figure}
 
@@ -170,8 +160,8 @@ Lets ignore that this is a two player game for a moment. From player X's perspec
 
 \begin{figure}[H]
         \centering
-        \includegraphics[width=400px,height=150px]{images/PolicyEvaluationExample/value_function.png}
-        \caption{}
+        \includegraphics[width=400px,height=250px]{images/PolicyEvaluationExample/value_function.png}
+        \caption{policy eval 2}
         \label{fig:my_label}
 \end{figure}
 
@@ -180,7 +170,7 @@ Lets calculate the value of using this policy from the initial state using equat
 \begin{figure}[H]
         \centering
         \includegraphics[width=400px,height=200px]{images/PolicyEvaluationExample/value_function_calc.png}
-        \caption{}
+        \caption{policy eval 3}
         \label{fig:my_label}
 \end{figure}
 

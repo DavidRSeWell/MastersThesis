@@ -1,4 +1,4 @@
-\documentclass[12pt,twoside]{report}
+\documentclass[12pt]{report}
 \usepackage[ruled,vlined]{algorithm2e}
 \usepackage{amsmath}
 \usepackage{amsthm,amsfonts,amssymb,amscd,amsxtra}
@@ -7,12 +7,16 @@
 \graphicspath{ {images/} }
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
+%\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
 \usepackage{fancyhdr}
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage{multicol}
 \usepackage{dirtytalk}
+\usepackage[a4paper,papersize={8.5in,11in},left=1.5in,right=1in,top=1in,bottom=1in]{geometry}
+\usepackage{setspace}
+
+\doublespacing
 
 
 \usepackage[
@@ -46,30 +50,47 @@ sorting=ynt
 
 \pagestyle{fancy}
 \fancyhead{}
-\fancyhead[RO,LE]{Thesis Title}
+\fancyhead[RO,LE]{From MDP to AlphaZero}
 \fancyfoot{}
 \fancyfoot[LE,RO]{\thepage}
 \fancyfoot[LO,CE]{Chapter \thechapter}
-\fancyfoot[CO,RE]{Author Name}
+\fancyfoot[CO,RE]{David SeWell}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
+\usepackage{titlesec}
 
-\title{Thesis Title}
-\author{Author Name}
+\titleformat{\section}
+  {\normalfont\fontsize{12}{1}\bfseries}{\thesection}{1em}{}
+  
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{15}\bfseries}{\thesection}{1em}{}
+  
+\titleformat{\chapter}
+  {\normalfont\fontsize{12}{15}\bfseries}{\thesection}{1em}{}
+
+\titlespacing{\chapter}{0pt}{5pt}{5pt}%
+
+\titlespacing{\section}{0pt}{5pt}{5pt}%
+
+\titlespacing{\subsection}{0pt}{5pt}{5pt}%
+  
+\title{From MDP to AlphaZero}
+\author{David SeWell}
 \date{Day Month Year}
 
+\pagenumbering{roman}
 \begin{document}
 
 \input{titlepage}
 
 \input{abstract}
 
-\chapter*{Acknowledgements}
-Thanks to Bruno Jedynak for all the feedback and discussion. 
+\input{chapters/acknowledgements} 
+
 
 \tableofcontents
-
+\pagenumbering{arabic}
 
 \chapter{Introduction}
 \input{chapters/introduction}
